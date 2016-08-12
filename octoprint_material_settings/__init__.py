@@ -11,8 +11,7 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
     octoprint.plugin.TemplatePlugin,
     octoprint.plugin.SettingsPlugin,
     octoprint.plugin.AssetPlugin,
-    octoprint.plugin.BlueprintPlugin,
-    octoprint.plugin.EventHandlerPlugin):
+    octoprint.plugin.BlueprintPlugin):
 
     printqueue = 0
 
@@ -33,27 +32,15 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
         materials = self._getMaterialsDict()
         materials["bed_temp"] = flask.request.values["bed_temp"];
         materials["print_temp"] = flask.request.values["print_temp"];
-        materials["bed_clear_script"] = flask.request.values["bed_clear_script"];
         self._writeMaterialsFile(materials)
         return flask.make_response("POST successful", 200)
 
     @octoprint.plugin.BlueprintPlugin.route("/runtest", methods=["POST"])
     def runTest(self):
         self._logger.info("MSL: successfully called test method")
-        # octoprint.printer.start_print()
         self._logger.info("MSL: octoprint" + ', '.join(dir(octoprint)))
         self._logger.info("MSL: octoprint.printer " + ', '.join(dir(octoprint.printer)))
         self._logger.info("MSL: self " + ', '.join(dir(self)))
-        # self._printer.start_print()
-        return flask.make_response("POST successful", 200)
-
-    @octoprint.plugin.BlueprintPlugin.route("/printcontinuously", methods=["POST"])
-    def printContinuously(self):
-        self._logger.info("MSL: successfully called print continuously method")
-        self.printqueue = int(flask.request.values["amount"])
-        self._logger.info("MSL: printing copies: " + str(self.printqueue))
-        if self.printqueue > 0:
-            self._printer.start_print()
         return flask.make_response("POST successful", 200)
 
 # SettingsPlugin
@@ -107,14 +94,6 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
         self._materials_dict = result_dict
         return result_dict
 
-    def print_completion_script(self, comm, script_type, script_name, *args, **kwargs):
-        if script_type == "gcode" and script_name == "afterPrintDone" and self.printqueue > 0:
-            prefix = self._materials_dict["bed_clear_script"]
-            postfix = None
-            return prefix, postfix
-        else:
-            return None
-
 # Gcode replacement
     def set_bed_temp(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         bTempKey = self._settings.get(["bed_temp"])
@@ -142,14 +121,6 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
                     cmd = "M109 S" + t
                     return cmd
 
-    # Event Handling
-    def on_event(self, event, payload):
-        if event == "PrintDone":
-            if self.printqueue > 0:
-                self.printqueue -= 1
-                if self.printqueue > 0: self._printer.start_print()
-        return
-
 __plugin_name__ = "Material Settings"
 def __plugin_load__():
     global __plugin_implementation__
@@ -158,5 +129,4 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.set_bed_temp,
-        "octoprint.comm.protocol.scripts": __plugin_implementation__.print_completion_script,
     }

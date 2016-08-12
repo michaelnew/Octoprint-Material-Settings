@@ -15,23 +15,6 @@ $(function() {
         self.printNumber = ko.observable();
         self.printNumber(0);
 
-        self.printContinuously = function() {
-            if (parseInt(self.printNumber()) > 0) {
-                $.ajax({
-                    url: "plugin/material_settings/printcontinuously",
-                    type: "POST",
-                    dataType: "json",
-                    headers: {
-                        "X-Api-Key":UI_API_KEY,
-                    },
-                    data: {
-                        amount: self.printNumber,
-                    },
-                    success: self.postResponse
-                });
-            }
-        }
-
         self.requestData = function() {
             $.ajax({
                 url: "plugin/material_settings/materialget",
@@ -41,7 +24,7 @@ $(function() {
             });
         };
 
-        self.postData = function(bTemp, pTemp, bScript) 
+        self.postData = function(bTemp, pTemp) 
         {
             $.ajax({
                 url: "plugin/material_settings/materialset",
@@ -53,7 +36,6 @@ $(function() {
                 data: {
                         bed_temp: bTemp,
                         print_temp: pTemp,
-                        bed_clear_script: bScript
                     },
                 success: self.postResponse
             });
@@ -66,13 +48,10 @@ $(function() {
         self.fromResponse = function(data) {
             self.bedTemp(data["bed_temp"]);
             self.printTemp(data["print_temp"]);
-            self.bedClearScript(data["bed_clear_script"])
-            console.log('Callback - data: ' + data["bed_clear_script"]);
         };
 
         self.updateMaterial = function() {
-            console.log('posting bed clear script: ' + self.bedClearScript());
-            self.postData(self.bedTemp(), self.printTemp(), self.bedClearScript());
+            self.postData(self.bedTemp(), self.printTemp());
         }
 
         self.runTest = function() {
