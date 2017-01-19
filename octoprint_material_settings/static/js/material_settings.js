@@ -10,10 +10,9 @@ $(function() {
 
         self.settings = parameters[0];
         self.bedTemp = ko.observable();
-        self.bedClearScript = ko.observable();
         self.printTemp = ko.observable();
-        self.printNumber = ko.observable();
-        self.printNumber(0);
+        self.bedTempFirstLayer = ko.observable();
+        self.printTempFirstLayer = ko.observable();
 
         self.requestData = function() {
             $.ajax({
@@ -24,7 +23,7 @@ $(function() {
             });
         };
 
-        self.postData = function(bTemp, pTemp) 
+        self.postData = function(bTemp, bTempFL, pTemp, pTempFL) 
         {
             $.ajax({
                 url: "plugin/material_settings/materialset",
@@ -35,7 +34,9 @@ $(function() {
                 },
                 data: {
                         bed_temp: bTemp,
+                        bed_temp_first_layer: bTempFL,
                         print_temp: pTemp,
+                        print_temp_first_layer: pTempFL,
                     },
                 success: self.postResponse
             });
@@ -47,11 +48,13 @@ $(function() {
 
         self.fromResponse = function(data) {
             self.bedTemp(data["bed_temp"]);
+            self.bedTempFirstLayer(data["bed_temp_first_layer"]);
             self.printTemp(data["print_temp"]);
+            self.printTempFirstLayer(data["print_temp_first_layer"]);
         };
 
         self.updateMaterial = function() {
-            self.postData(self.bedTemp(), self.printTemp());
+            self.postData(self.bedTemp(), self.bedTempFirstLayer(), self.printTemp(), self.printTempFirstLayer());
         }
 
         self.runTest = function() {

@@ -1,6 +1,7 @@
 <form class="form-horizontal">
     <h1>{{ _('Material Settings') }}</h1>
-    <div class="control-group" title="{{ _('This value will override any bed temperature command (M190 and M140) sent to the printer with the value 50.5') }}">
+
+    <div class="control-group" title="{{ _('This value will override any bed temperature command (M190 and M140) sent to the printer') }}">
         <label class="control-label">{{ _('Bed Temperature') }}</label>
         <div class="controls">
             <div class="input-append">
@@ -9,7 +10,18 @@
             </div>
         </div>
     </div>
-    <div class="control-group" title="{{ _('Interval in which to poll for the SD printing status information from the printer while printing') }}">
+
+    <div class="control-group" title="{{ _('This value will override any bed temperature command (M190 and M140) sent to the printer') }}">
+        <label class="control-label">{{ _('First Layer Bed Temperature') }}</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: bedTempFirstLayer"> 
+                <span class="add-on">°C</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group" title="{{ _('This value will override any print temperature command (M190 and M140) sent to the printer') }}">
         <label class="control-label">{{ _('Print Temperature') }}</label>
         <div class="controls">
             <div class="input-append">
@@ -18,6 +30,17 @@
             </div>
         </div>
     </div>
+
+    <div class="control-group" title="{{ _('This value will override any print temperature command (M190 and M140) sent to the printer') }}">
+        <label class="control-label">{{ _('First Layer Print Temperature') }}</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: printTempFirstLayer">
+                <span class="add-on">°C</span>
+            </div>
+        </div>
+    </div>
+
     <div>
         <button class="btn" data-bind="click: updateMaterial">{{ _('Update') }}</button>
         <!-- <button class="btn" data-bind="click: runTest">{{ _('TEST') }}</button> -->

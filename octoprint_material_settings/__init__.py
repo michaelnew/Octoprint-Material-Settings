@@ -32,6 +32,8 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
         materials = self._getMaterialsDict()
         materials["bed_temp"] = flask.request.values["bed_temp"];
         materials["print_temp"] = flask.request.values["print_temp"];
+        materials["bed_temp_first_layer"] = flask.request.values["bed_temp_first_layer"];
+        materials["print_temp_first_layer"] = flask.request.values["print_temp_first_layer"];
         self._writeMaterialsFile(materials)
         return flask.make_response("POST successful", 200)
 
@@ -45,14 +47,21 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
 
 # SettingsPlugin
     def get_settings_defaults(self):
-        return dict(bed_temp="50",
-            print_temp="200")
+        return dict(
+            bed_temp="50",
+            bed_temp_first_layer="51",
+            print_temp="200",
+            print_temp_first_layer="201"
+            )
 
 # TemplatePlugin
     def get_template_vars(self):
         return dict(
             bed_temp=self._settings.get(["bed_temp"]),
-            print_temp=self._settings.get(["print_temp"]))
+            bed_temp_first_layer=self._settings.get(["bed_temp_first_layer"]),
+            print_temp=self._settings.get(["print_temp"]),
+            print_temp_first_layer=self._settings.get(["print_temp_first_layer"])
+            )
 
     def get_template_configs(self):
         return [
@@ -98,18 +107,48 @@ class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
     def set_bed_temp(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         bTempKey = self._settings.get(["bed_temp"])
         pTempKey = self._settings.get(["print_temp"])
+        bTempKeyFirstLayer = self._settings.get(["bed_temp_first_layer"])
+        pTempKeyFirstLayer = self._settings.get(["print_temp_first_layer"])
 
         if cmd:
+
+            # swap bed temp commands
+            if cmd[:8] == ("M190 S" + bTempKeyFirstLayer):
+                t = self._materials_dict["bed_temp_first_layer"]
+                if t and t != "":
+                    cmd = "M190 S" + t
+                    return cmd
+
+            if cmd[:8] == ("M140 S" + bTempKeyFirstLayer):
+                t = self._materials_dict["bed_temp_first_layer"]
+                if t and t != "":
+                    cmd = "M140 S" + t
+                    return cmd
+
             if cmd[:8] == ("M190 S" + bTempKey):
                 t = self._materials_dict["bed_temp"]
                 if t and t != "":
                     cmd = "M190 S" + t
                     return cmd
+
             if cmd[:8] == ("M140 S" + bTempKey):
                 t = self._materials_dict["bed_temp"]
                 if t and t != "":
                     cmd = "M140 S" + t
                     return cmd
+
+            # swap print temp commands
+            if cmd[:9] == ("M104 S" + pTempKeyFirstLayer):
+                t = self._materials_dict["print_temp_first_layer"]
+                if t and t != "":
+                    cmd = "M104 S" + t
+                    return cmd
+            if cmd[:9] == ("M109 S" + pTempKeyFirstLayer):
+                t = self._materials_dict["print_temp_first_layer"]
+                if t and t != "":
+                    cmd = "M109 S" + t
+                    return cmd
+
             if cmd[:9] == ("M104 S" + pTempKey):
                 t = self._materials_dict["print_temp"]
                 if t and t != "":

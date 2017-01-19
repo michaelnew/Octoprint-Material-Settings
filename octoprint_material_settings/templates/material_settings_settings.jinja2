@@ -9,11 +9,31 @@
         </div>
     </div>
 
+    <div class="control-group" title="{{ _('Any bed temperature command (M190 and M140) set to this value will be overridden') }}">
+        <label class="control-label">{{ _('First Layer Bed Key Temperature') }}</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.material_settings.bed_temp_first_layer"> 
+                <span class="add-on">°C</span>
+            </div>
+        </div>
+    </div>
+
     <div class="control-group" title="{{ _('Any print temperature command (M104 and M109) set to this value will be overridden') }}">
         <label class="control-label">{{ _('Print Key Temperature') }}</label>
         <div class="controls">
             <div class="input-append">
                 <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.material_settings.print_temp">
+                <span class="add-on">°C</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group" title="{{ _('Any print temperature command (M104 and M109) set to this value will be overridden') }}">
+        <label class="control-label">{{ _('First Layer Print Key Temperature') }}</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.material_settings.print_temp_first_layer">
                 <span class="add-on">°C</span>
             </div>
         </div>
