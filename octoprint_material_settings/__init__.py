@@ -7,6 +7,10 @@ from octoprint.server import printer, NO_CONTENT
 import flask
 import os
 
+__plugin_name__ = "Octoprint-Material-Settings"
+__plugin_version__ = "0.1.1"
+__plugin_pythoncompat__ = ">=2.7,<4"
+
 class MaterialSettingsPlugin(octoprint.plugin.StartupPlugin,
     octoprint.plugin.TemplatePlugin,
     octoprint.plugin.SettingsPlugin,
