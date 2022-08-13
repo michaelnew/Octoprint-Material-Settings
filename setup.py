@@ -14,7 +14,7 @@ plugin_package = "octoprint_material_settings"
 plugin_name = "OctoPrint-Material-Settings"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.1.0"
+plugin_version = "0.1.1"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -34,6 +34,8 @@ plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
 plugin_requires = []
+
+plugin_pythoncompat = ">=3.7,<4"
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
